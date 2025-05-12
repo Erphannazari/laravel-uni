@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     // User Management Routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', UserController::class);
+        Route::get('/activity-logs', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
     });
 });
 
