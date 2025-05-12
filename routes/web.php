@@ -25,6 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', UserController::class);
         Route::get('/activity-logs', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        
+        // Category routes
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+        
+        // Product routes
+        Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
     });
 });
 
