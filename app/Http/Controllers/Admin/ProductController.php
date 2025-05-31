@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Tag;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -15,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->paginate(10);
+        $products = Product::with(['category', 'tags'])->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
@@ -25,7 +27,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.products.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.products.create', compact('categories', 'tags'));
     }
 
     /**
@@ -38,15 +41,20 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
         $product = Product::create($validated);
 
-        // Log activity
-        Log::info('Product created', [
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'product_name' => $product->name
+        if ($request->has('tags')) {
+            $product->tags()->sync($request->tags);
+        }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'product_created',
+            'description' => "Created product: {$product->name}",
         ]);
 
         return redirect()->route('admin.products.index')
@@ -67,7 +75,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
+        $tags = Tag::all();
+        return view('admin.products.edit', compact('product', 'categories', 'tags'));
     }
 
     /**
@@ -80,15 +89,22 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
         $product->update($validated);
 
-        // Log activity
-        Log::info('Product updated', [
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'product_name' => $product->name
+        if ($request->has('tags')) {
+            $product->tags()->sync($request->tags);
+        } else {
+            $product->tags()->detach();
+        }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'product_updated',
+            'description' => "Updated product: {$product->name}",
         ]);
 
         return redirect()->route('admin.products.index')
@@ -100,13 +116,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $product->tags()->detach();
         $product->delete();
 
-        // Log activity
-        Log::info('Product deleted', [
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'product_name' => $product->name
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'product_deleted',
+            'description' => "Deleted product: {$product->name}",
         ]);
 
         return redirect()->route('admin.products.index')

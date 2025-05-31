@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Products')
+
 @section('content')
-<div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -24,6 +25,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Products List</h3>
+                        </div>
                         <div class="card-body">
                             @if(session('success'))
                                 <div class="alert alert-success">
@@ -37,50 +41,58 @@
                                 </div>
                             @endif
 
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Price</th>
-                                        <th>Category</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($products as $product)
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $product->id }}</td>
-                                            <td>{{ $product->name }}</td>
-                                            <td>{{ $product->description }}</td>
-                                            <td>${{ number_format($product->price, 2) }}</td>
-                                            <td>{{ $product->category->name }}</td>
-                                            <td>
-                                                <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-info">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
-                                                </form>
-                                            </td>
+                                            <th style="width: 5%">ID</th>
+                                            <th style="width: 20%">Name</th>
+                                            <th style="width: 25%">Description</th>
+                                            <th style="width: 10%">Price</th>
+                                            <th style="width: 15%">Category</th>
+                                            <th style="width: 15%">Tags</th>
+                                            <th style="width: 10%">Actions</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-
-                            <div class="mt-4">
-                                {{ $products->links() }}
+                                    </thead>
+                                    <tbody>
+                                        @foreach($products as $product)
+                                            <tr>
+                                                <td>{{ $product->id }}</td>
+                                                <td>{{ $product->name }}</td>
+                                                <td>{{ $product->description }}</td>
+                                                <td>{{ $product->price }}</td>
+                                                <td>{{ $product->category->name }}</td>
+                                                <td>
+                                                    @foreach($product->tags as $tag)
+                                                        <span class="badge badge-info">{{ $tag->name }}</span>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger ml-1" onclick="return confirm('Are you sure you want to delete this product?')">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
+                        </div>
+                        <div class="card-footer clearfix">
+                            {{ $products->links() }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-</div>
 @endsection 

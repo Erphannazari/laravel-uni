@@ -65,6 +65,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-tag"></i>
+              <p>Tags</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
               <i class="nav-icon fas fa-sign-out-alt"></i>
               <p>Logout</p>

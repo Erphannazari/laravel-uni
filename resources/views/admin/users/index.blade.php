@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -43,39 +42,43 @@
                                 </div>
                             @endif
 
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($users as $user)
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>
-                                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-info">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                @if($user->id !== auth()->id())
-                                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
-                                                            <i class="fas fa-trash"></i> Delete
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </td>
+                                            <th style="width: 10%">ID</th>
+                                            <th style="width: 30%">Name</th>
+                                            <th style="width: 40%">Email</th>
+                                            <th style="width: 20%">Actions</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($users as $user)
+                                            <tr>
+                                                <td>{{ $user->id }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        @if($user->id !== auth()->id())
+                                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger ml-1" onclick="return confirm('Are you sure you want to delete this user?')">
+                                                                    <i class="fas fa-trash"></i> Delete
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
@@ -87,5 +90,4 @@
             </div>
         </div>
     </section>
-</div>
 @endsection 

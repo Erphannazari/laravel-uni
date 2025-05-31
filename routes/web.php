@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\TagController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
         
         // Product routes
         Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+
+        // Tag routes
+        Route::resource('tags', TagController::class);
     });
 });
 
